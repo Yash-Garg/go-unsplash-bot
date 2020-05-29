@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -47,15 +48,28 @@ func main() {
 	}
 
 	// Reply to /start messages
-	ubot.Dispatcher.AddHandler(handlers.NewArgsCommand("start", start))
+	ubot.Dispatcher.AddHandler(handlers.NewArgsCommand("start", startHandler))
+
+	// Reply to /random messages
+	ubot.Dispatcher.AddHandler(handlers.NewCommand("random", randomHandler))
 
 	ubot.StartPolling()
 	// wait
 	ubot.Idle()
 }
 
-func start(_ ext.Bot, u *gotgbot.Update, args []string) error {
+func startHandler(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	_, err := msg.ReplyTextf("Hi there! I'm a telegram bot, written in Go and based on Unsplash's API")
 	return err
+}
+
+func randomHandler(b ext.Bot, u *gotgbot.Update) error {
+	unsplash := random()
+	caption := fmt.Sprintf("ID: %s\nBy %s\nLink: %s", unsplash.ID, unsplash.User.Name, unsplash.Links.HTML)
+	_, err := b.ReplyPhotoCaptionStr(u.EffectiveChat.Id, unsplash.Urls.Thumb, caption, u.EffectiveMessage.MessageId)
+	if err != nil {
+		b.Logger.Warnw("Error sending V2", zap.Error(err))
+	}
+	return nil
 }
