@@ -14,7 +14,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-//APIURL used for response
+// APIURL used for response
 const APIURL = `http://api.unsplash.com/`
 
 // init is invoked before main()
@@ -29,7 +29,6 @@ func main() {
 	var botToken = os.Getenv("API_KEY")
 	var unsplashAccess = os.Getenv("ACCESS_KEY")
 	var unsplashSecret = os.Getenv("SECRET_KEY")
-
 	// Checks if all variables are present
 	if botToken == "" && unsplashAccess == "" && unsplashSecret == "" {
 		log.Println("One or more variables missing in config")
@@ -54,6 +53,8 @@ func main() {
 
 	// Reply to /random messages
 	ubot.Dispatcher.AddHandler(handlers.NewCommand("random", randomHandler))
+
+	ubot.Dispatcher.AddHandler(handlers.NewArgsCommand("search", searchHandler))
 
 	if os.Getenv("USE_WEBHOOKS") == "t" {
 		// start getting updates
@@ -94,6 +95,18 @@ func randomHandler(b ext.Bot, u *gotgbot.Update) error {
 	fname := strings.Title(unsplash.User.Name)
 	caption := fmt.Sprintf("Wall By %s\nLink : %s", fname, unsplash.Links.HTML)
 	_, err := b.ReplyPhotoCaptionStr(u.EffectiveChat.Id, unsplash.Urls.Small, caption, u.EffectiveMessage.MessageId)
+	if err != nil {
+		b.Logger.Warnw("Error sending V2", zap.Error(err))
+	}
+	return nil
+}
+
+func searchHandler(b ext.Bot, u *gotgbot.Update, args []string) error {
+	var query string = args[0]
+	data := search(query)
+	fname := strings.Title(data.Photos.Results[0].User.Name)
+	caption := fmt.Sprintf("Wall By %s\nLink : %s", fname, data.Photos.Results[0].Urls.Small)
+	_, err := b.ReplyPhotoCaptionStr(u.EffectiveChat.Id, data.Photos.Results[0].Urls.Small, caption, u.EffectiveMessage.MessageId)
 	if err != nil {
 		b.Logger.Warnw("Error sending V2", zap.Error(err))
 	}
