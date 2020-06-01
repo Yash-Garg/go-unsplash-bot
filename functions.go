@@ -31,7 +31,7 @@ type Unsplash struct {
 
 func random() Unsplash {
 	var AccessKey = os.Getenv("ACCESS_KEY")
-	url := API_URL + "photos/random?client_id=" + AccessKey
+	url := APIURL + "photos/random?client_id=" + AccessKey
 	response, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)

@@ -13,7 +13,8 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-const API_URL = `http://api.unsplash.com/`
+//APIURL used for response
+const APIURL = `http://api.unsplash.com/`
 
 // init is invoked before main()
 func init() {
