@@ -59,7 +59,6 @@ func random() Unsplash {
 
 func search(q string) SearchInfo {
 	url := fmt.Sprintf("%ssearch?query=%s/photos&client_id=%s", APIURL, q, os.Getenv("CLIENT_ACCESS_KEY"))
-	fmt.Println(url)
 	response, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
