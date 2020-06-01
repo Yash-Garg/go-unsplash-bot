@@ -1,6 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
 )
 
@@ -17,22 +22,31 @@ type Unsplash struct {
 	} `json:"links"`
 	User struct {
 		Name string `json:"name"`
-		Exif struct {
-			Make  string `json:"make"`
-			Model string `json:"model"`
-		} `json:"exif"`
 	} `json:"user"`
-}
-
-// UnsplashInfo struct
-type UnsplashInfo struct {
-	Info []Unsplash
+	Exif struct {
+		Make  string `json:"make"`
+		Model string `json:"model"`
+	} `json:"exif"`
 }
 
 func random() Unsplash {
 	var AccessKey = os.Getenv("ACCESS_KEY")
 	url := API_URL + "photos/random?client_id=" + AccessKey
-	print(url)
+	response, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer response.Body.Close()
 
-	return Unsplash{}
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var info Unsplash
+	err = json.Unmarshal(responseData, &info)
+	if err != nil {
+		fmt.Print(err)
+	}
+	return info
 }

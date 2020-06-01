@@ -13,7 +13,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-const API_URL = `https://api.unsplash.com/`
+const API_URL = `http://api.unsplash.com/`
 
 // init is invoked before main()
 func init() {
@@ -66,7 +66,7 @@ func startHandler(_ ext.Bot, u *gotgbot.Update, args []string) error {
 
 func randomHandler(b ext.Bot, u *gotgbot.Update) error {
 	unsplash := random()
-	caption := fmt.Sprintf("ID: %s\nBy %s\nLink: %s", unsplash.ID, unsplash.User.Name, unsplash.Links.HTML)
+	caption := fmt.Sprintf("Wall By %s\nLink: %s", unsplash.User.Name, unsplash.Links.HTML)
 	_, err := b.ReplyPhotoCaptionStr(u.EffectiveChat.Id, unsplash.Urls.Thumb, caption, u.EffectiveMessage.MessageId)
 	if err != nil {
 		b.Logger.Warnw("Error sending V2", zap.Error(err))
