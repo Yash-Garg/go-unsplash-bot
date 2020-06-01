@@ -54,6 +54,7 @@ func main() {
 	// Reply to /random messages
 	ubot.Dispatcher.AddHandler(handlers.NewCommand("random", randomHandler))
 
+	// Reply to /search [args] messages
 	ubot.Dispatcher.AddHandler(handlers.NewArgsCommand("search", searchHandler))
 
 	if os.Getenv("USE_WEBHOOKS") == "t" {
