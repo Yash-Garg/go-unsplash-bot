@@ -27,10 +27,10 @@ func init() {
 
 func main() {
 	var botToken = os.Getenv("API_KEY")
-	var unsplashAccess = os.Getenv("ACCESS_KEY")
-	var unsplashSecret = os.Getenv("SECRET_KEY")
+	var unsplashAccess = os.Getenv("CLIENT_ACCESS_KEY")
+
 	// Checks if all variables are present
-	if botToken == "" && unsplashAccess == "" && unsplashSecret == "" {
+	if botToken == "" && unsplashAccess == "" {
 		log.Println("One or more variables missing in config")
 	}
 

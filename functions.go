@@ -9,8 +9,8 @@ import (
 	"os"
 )
 
-// AccessKey of unsplash
-var AccessKey = os.Getenv("ACCESS_KEY")
+// ClientAccess key of unsplash
+var ClientAccess = os.Getenv("CLIENT_ACCESS_KEY")
 
 // Unsplash structure
 type Unsplash struct {
@@ -40,7 +40,7 @@ type SearchInfo struct {
 }
 
 func random() Unsplash {
-	url := APIURL + "photos/random?client_id=" + AccessKey
+	url := fmt.Sprintf("%sphotos/random?client_id=%s", APIURL, ClientAccess)
 	response, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
@@ -61,7 +61,7 @@ func random() Unsplash {
 }
 
 func search(q string) SearchInfo {
-	url := APIURL + "search?query=" + q + "/photos&client_id=" + AccessKey
+	url := fmt.Sprintf("%ssearch?query=%s/photos&client_id=%s", APIURL, q, ClientAccess)
 	fmt.Println(url)
 	response, err := http.Get(url)
 	if err != nil {
