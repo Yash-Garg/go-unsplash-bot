@@ -14,8 +14,8 @@ type Unsplash struct {
 	ID   string `json:"id"`
 	Desc string `json:"description"`
 	Urls struct {
-		Raw   string `json:"raw"`
-		Thumb string `json:"thumb"`
+		Raw     string `json:"raw"`
+		Regular string `json:"regular"`
 	} `json:"urls"`
 	Links struct {
 		HTML string `json:"html"`

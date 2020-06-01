@@ -45,7 +45,7 @@ func main() {
 	l.Info("Starting gotgbot...")
 	ubot, err := gotgbot.NewUpdater(botToken, logger)
 	if err != nil {
-		l.Fatalw("Failed to start updater", zap.Error(err))
+		l.Fatalw("Failed to start ubot", zap.Error(err))
 	}
 
 	// Reply to /start messages
@@ -54,7 +54,30 @@ func main() {
 	// Reply to /random messages
 	ubot.Dispatcher.AddHandler(handlers.NewCommand("random", randomHandler))
 
-	ubot.StartPolling()
+	if os.Getenv("USE_WEBHOOKS") == "t" {
+		// start getting updates
+		webhook := gotgbot.Webhook{
+			Serve:          "0.0.0.0",
+			ServePort:      8080,
+			ServePath:      ubot.Bot.Token,
+			URL:            os.Getenv("WEBHOOK_URL"),
+			MaxConnections: 30,
+		}
+		ubot.StartWebhook(webhook)
+		ok, err := ubot.SetWebhook(ubot.Bot.Token, webhook)
+		if err != nil {
+			l.Fatalw("Failed to start bot", zap.Error(err))
+		}
+		if !ok {
+			l.Fatalw("Failed to set webhook", zap.Error(err))
+		}
+	} else {
+		err := ubot.StartPolling()
+		if err != nil {
+			l.Fatalw("Failed to start polling", zap.Error(err))
+		}
+	}
+
 	// wait
 	ubot.Idle()
 }
@@ -68,7 +91,8 @@ func startHandler(_ ext.Bot, u *gotgbot.Update, args []string) error {
 func randomHandler(b ext.Bot, u *gotgbot.Update) error {
 	unsplash := random()
 	caption := fmt.Sprintf("Wall By %s\nLink: %s", unsplash.User.Name, unsplash.Links.HTML)
-	_, err := b.ReplyPhotoCaptionStr(u.EffectiveChat.Id, unsplash.Urls.Thumb, caption, u.EffectiveMessage.MessageId)
+	_, err := b.ReplyPhotoCaptionStr(u.EffectiveChat.Id, unsplash.Urls.Regular, caption, u.EffectiveMessage.MessageId)
+	_, err = b.SendDocumentStr(u.EffectiveChat.Id, unsplash.Urls.Raw)
 	if err != nil {
 		b.Logger.Warnw("Error sending V2", zap.Error(err))
 	}
