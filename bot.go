@@ -92,7 +92,7 @@ func startHandler(_ ext.Bot, u *gotgbot.Update, args []string) error {
 func randomHandler(b ext.Bot, u *gotgbot.Update) error {
 	unsplash := random()
 	fname := strings.Title(unsplash.User.Name)
-	caption := fmt.Sprintf("Wall By %s\nLink: %s", fname, unsplash.Links.HTML)
+	caption := fmt.Sprintf("Wall By %s\nLink : %s", fname, unsplash.Links.HTML)
 	_, err := b.ReplyPhotoCaptionStr(u.EffectiveChat.Id, unsplash.Urls.Small, caption, u.EffectiveMessage.MessageId)
 	if err != nil {
 		b.Logger.Warnw("Error sending V2", zap.Error(err))
